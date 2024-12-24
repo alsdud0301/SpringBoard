@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="#" th:action="@{/user}" method="post" th:object="${user}">
+<!--        <input type="text" th:value="*{name}" th:id="*{name}" th:name="*{name}">-->
+        <label for="name">name: </label>
+
+        <input type="text" id="name" th:field="*{name}">
+        <label for="age">age: </label>
+        <input type="text" id="age" th:field="*{age}">
+
+        <label for="address">address: </label>
+        <input type="text" id="address" th:field="*{address}">
+
+        <button>submit</button>
+
+
+
+    </form>
+</body>
+</html>

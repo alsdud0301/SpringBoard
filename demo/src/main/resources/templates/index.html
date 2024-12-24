@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/fragment.css">
+</head>
+<body>
+<header>
+    <div th:replace="~{fragment::header1}"></div>
+    <div th:insert="~{fragment::header1}"></div>
+</header>
+<h1>template/index.html</h1>
+<!-- @{/board/write} 처럼 슬래시가 있으면 @{}-->
+<a href="intro.html" th:href="@{/intro}">intro.html</a>
+<footer>
+    <div th:replace="~{fragment::footer1}"></div>
+    <div th:insert="~{fragment::footer1}"></div>
+</footer>
+</body>
+</html>
