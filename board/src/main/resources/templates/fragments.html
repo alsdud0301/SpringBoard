@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+<th:block th:fragment="header">
+    <header>
+        <div class="tob-bar">
+            <div class="content">
+                <img src="img/r-logo.jpg" class="top-left logo" onclick="goHome()">
+                <nav class="top-right">
+                    <ul>
+                        <li class="suc" id="m_name">테스트님</li>
+                        <li class="suc">
+                            <a href="/member/logout">logout</a>
+                        </li>
+                        <li class="bef"><a href="/member/login">login</a> </li>
+                        <li class="bef"><a href="/member/join">join</a> </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+</th:block>
+
+
+    <footer th:fragment="footer">
+        <div class="footer-bar">
+            <div class="content">
+                <div class="fcontents">
+                    <img class="footer-logo"
+                         src="/img/r-logo-v.png">
+                    <span class="footer-txt">&copy; 반응형 웹기반 과정평가형 2024</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function goHome(){
+            location.href="/"; //localhost:8085
+        }
+
+    </script>
+
+</body>
+</html>
