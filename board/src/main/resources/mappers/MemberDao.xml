@@ -2,9 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
+<!--
+id 자리엔 메소드 이름
+parameterType은 생략 가능
+
+-->
 <mapper namespace="com.icia.board.dao.MemberDao">
+    <insert id="join" parameterType="memberDto">
+        insert into member(m_id,m_pwd,m_name,m_birth,m_addr,m_point) values(#{m_id},#{m_pwd},#{m_name},#{m_birth},#{m_addr},default)
+    </insert>
     <select id="login" parameterType="MemberDto" resultType="boolean">
         SELECT COUNT(*) FROM MEMBER WHERE M_ID = #{m_id} AND M_PWD = #{m_pwd}
+    </select>
+    <select id="isUserId" parameterType="String" resultType="java.lang.Boolean">
+        select count(*) from member where m_id=#{mId}
     </select>
 
 </mapper>

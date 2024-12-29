@@ -15,4 +15,12 @@ public class MemberServcie {
 
         return mDao.login(memberDto);
     }
+
+    public boolean join(MemberDto memberDto) {
+        //이미 사용중인 아이디: true
+        if(mDao.isUserId(memberDto.getM_id())){
+            return false;
+        };
+        return  mDao.join(memberDto);
+    }
 }
