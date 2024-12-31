@@ -10,7 +10,7 @@ function msgPrint(){
 }
 function loginStatus(){
     if(id!=null){
-        $('#m_id').html(id+"님");
+        $('#m_name').html(id.m_name+"님");
         $('.suc').css('display','block'); //.show()
         $('.bef').css('display','none');
 

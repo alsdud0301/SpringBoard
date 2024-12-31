@@ -17,5 +17,11 @@ parameterType은 생략 가능
     <select id="isUserId" parameterType="String" resultType="java.lang.Boolean">
         select count(*) from member where m_id=#{mId}
     </select>
+    <select id="getSecurityPw" resultType="String">
+        SELECT M_PWD FROM MEMBER WHERE M_ID=#{mId}
+    </select>
+    <select id="getMemberInfo" resultType="com.icia.board.dto.MemberDto">
+        select m_id,m_name,m_point,g_name from member m join grade g on m.m_point between g.g_lowpoint and g.g_highpoint where m.m_id=#{mId};
+    </select>
 
 </mapper>

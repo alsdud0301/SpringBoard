@@ -17,8 +17,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <script defer src="/js/common.js"></script>
     <script th:inline="javascript">
-        const m = [[${msg}]];
-        const id = [[${session.id}]];	// id속성이 없으면 null
+        // const m = [[${msg}]];
+        const m = [[${param.msg}]]
+        const id = [[${session.member}]];	// id속성이 없으면 null
 
         $(() => {
             msgPrint()

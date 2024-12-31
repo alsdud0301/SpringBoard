@@ -6,9 +6,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class BoardController {
-    @GetMapping("/board")
+    @GetMapping("/board/list")
     @ResponseBody
-    public String board(){
-        return "board";
+    public String list(){
+
+        return "게시글 리스트 보기";
     }
 }
