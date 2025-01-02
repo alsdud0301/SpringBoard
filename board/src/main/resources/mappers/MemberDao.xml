@@ -4,8 +4,11 @@
 
 <!--
 id 자리엔 메소드 이름
-parameterType은 생략 가능
-
+parameterType : 생략 가능, Mapper Class 가능, 한번만 사용가능
+resultType : resultType="Boolean" 생략 가능(?), Mapper Class 가능, 한번만 사용가능
+#{변수명}, #{필드명} #{속성명}
+여러 레코드를 반환시 List 타입이 아닌 객체타입명시
+${변수명}, ${필드명}, ${속성명} : 문자열일경우 ''을 붙이지 않음
 -->
 <mapper namespace="com.icia.board.dao.MemberDao">
     <insert id="join" parameterType="memberDto">

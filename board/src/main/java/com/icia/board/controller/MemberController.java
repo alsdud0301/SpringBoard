@@ -28,7 +28,6 @@ public class MemberController {
     public String login(MemberDto memberDto, HttpSession session,RedirectAttributes rttr){
         log.info("id:{}, pwd:{}",memberDto.getM_id(),memberDto.getM_pwd());
         //DB에서 select
-        MemberDto mDto = new MemberDto();
         //MemberDto memberDto = new MemberDto();
         //MemberDto.setM_id(m_id).setM_pwd(m_pwd);
 //        MemberDto memberDto = MemberDto.builder().m_id(m_id).m_pwd(m_pwd).build();
@@ -45,7 +44,7 @@ public class MemberController {
 //            rttr.addAttribute("msg","로그인 실패");//request 객체에 저장
             //session영역저장-->request영역 저장--> 1번 사용 후 자동 삭제
 
-            return "redirect:/";
+            return "redirect:/board";
         }
         rttr.addFlashAttribute("msg","로그인 실패");
         return "index";
