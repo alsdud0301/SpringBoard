@@ -5,6 +5,9 @@
         INSERT INTO BOARD
         VALUES(NULL, #{b_title}, #{b_contents}, #{b_writer}, DEFAULT, DEFAULT)
     </insert>
+    <delete id="deleteBoard">
+        delete from board where b_num=#{b_num}
+    </delete>
     <select id="getBoardList" resultType="com.icia.board.dto.BoardDto" parameterType="HashMap">
         SELECT *
         FROM BOARD
@@ -28,5 +31,8 @@
         <if test="colname!=null and colname!=''">
             where ${colname} like concat('%',#{keyword},'%')
         </if>
+    </select>
+    <select id="getBoardDetail" resultType="com.icia.board.dto.BoardDto">
+        select b_num,b_title,b_contents,b_writer,b_views,date_format(b_date,'%Y-%m-%d %H:%i:%s') b_date from board where b_num=#{b_num}
     </select>
 </mapper>
