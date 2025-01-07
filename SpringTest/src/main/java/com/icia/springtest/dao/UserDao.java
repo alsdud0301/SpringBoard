@@ -10,7 +10,7 @@ public interface UserDao {
 
     boolean join(UserDto userDto);
 
-    String login(UserDto userDto);
+    String login(String userID);
 
     String getSecurityPw(String userID);
 }

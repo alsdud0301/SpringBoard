@@ -2,7 +2,6 @@ package com.icia.springtest.service;
 
 import com.icia.springtest.dao.UserDao;
 import com.icia.springtest.dto.UserDto;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,4 +40,19 @@ public class UserService {
 
 
     }
+
+    public boolean checkID(UserDto uDto) {
+        String checkid = uDao.login(uDto.getUserID());
+        log.info("checkID반응");
+        if(checkid!=null){
+            log.info("true반환");
+            return true;
+        }else{
+            log.info("false반환");
+            return false;
+        }
+
+    }
+
+
 }

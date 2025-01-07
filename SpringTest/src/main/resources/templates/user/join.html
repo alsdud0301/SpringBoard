@@ -3,15 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
 <h1>회원가입</h1>
     <form method="post" action="/user/join">
-    <input type="text" name="userID" placeholder="아이디">
+    <input type="text" id="userid" name="userID" placeholder="아이디" onblur="check()">
+        <p id="error"></p>
     <input type="text" name="userPW" placeholder="비밀번호">
     <input type="text" name="phoneNumber" placeholder="전화번호">
     <button>회원가입</button>
     </form>
+    <script th:inline="javascript">
+        function check() {
+            const checkid = document.getElementById('userid').value;
+            console.log("엥");
+
+            axios.post('/user/joincheck', // URL
+                { userID: checkid }, // 데이터
+                {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }
+            ).then((res) => {
+
+                const error = document.getElementById('error');
+
+                if (res.data) {
+                    error.textContent = "아이디가 중복되었습니다";
+                    console.log(res)
+                    console.log(res.data)
+                } else {
+                    error.textContent = "사용 가능한 아이디입니다";
+                    console.log(res)
+                }
+            }).catch((err) => {
+                console.log(err);
+                console.log("제발 좀");
+            });
+        }
+
+    </script>
 
 </body>
 </html>
