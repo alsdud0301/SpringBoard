@@ -4,7 +4,10 @@
     <insert id="join">
         insert into user values(#{u_id},#{userID},#{userPW},#{phoneNumber})
     </insert>
-    <select id="login" resultType="java.lang.Boolean">
-        select * from user where userID=#{userID}
+    <select id="login" resultType="java.lang.String">
+        select * from user where userid=#{userID}
+    </select>
+    <select id="getSecurityPw" resultType="java.lang.String">
+        select userPW from user where userid=#{userID}
     </select>
 </mapper>

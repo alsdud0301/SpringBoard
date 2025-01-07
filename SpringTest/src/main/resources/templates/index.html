@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script defer th:src="@{/js/common.js}">
+
+
+    </script>
+    <script th:inline="javascript">
+        const user = [[${session.userID}]];
+        onload =()=>{
+            if(user!=null){
+                console.log("테스트");
+            }else{
+                console.log("로그인안되어있음")
+            }
+
+            sessionuser(user);
+        }
+    </script>
 </head>
 <body>
+<th:block th:replace="~{fragments::header}"></th:block>
+<p th:text="${session.userID}"></p>
 <h1>인덱스라고</h1>
-<a href="/join">회원가입</a>
+
 </body>
 </html>

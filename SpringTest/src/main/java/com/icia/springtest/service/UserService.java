@@ -2,6 +2,7 @@ package com.icia.springtest.service;
 
 import com.icia.springtest.dao.UserDao;
 import com.icia.springtest.dto.UserDto;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class UserService {
     private UserDao uDao;
     public boolean join(UserDto userDto) {
         BCryptPasswordEncoder pwEncoder = new BCryptPasswordEncoder();
-        userDto.setUserPW(pwEncoder.encode(userDto.getUserID()));
+        userDto.setUserPW(pwEncoder.encode(userDto.getUserPW()));
         log.info(userDto.getUserID());
         log.info("user : "+userDto.getUserPW());
         return  uDao.join(userDto);
@@ -25,6 +26,19 @@ public class UserService {
 
     public boolean login(UserDto userDto) {
         log.info("아이디 : "+userDto.getUserID());
-        return uDao.login(userDto);
+        BCryptPasswordEncoder pwEncoder = new BCryptPasswordEncoder();
+        String encoPW = uDao.getSecurityPw(userDto.getUserID());
+        log.info("비번"+encoPW);
+        log.info("비번2");
+        log.info(String.valueOf(pwEncoder.matches(userDto.getUserPW(),encoPW)));
+        if(pwEncoder.matches(userDto.getUserPW(),encoPW)){
+            log.info("로그인 성공");
+            return true;
+        }else{
+            log.info("로그인 실패");
+            return false;
+        }
+
+
     }
 }
