@@ -3,8 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        tr{
+            border: 1px solid black;
+        }
+        td{
+            border: 1px solid black;
+        }
+    </style>
+    <script th:src="@{/js/common.js}">
+
+
+    </script>
+    <script>
+        const user = '[[${session.userID}]]';
+        onload =()=> {
+            console.log("테스트");
+            sessionuser(user);
+        }
+    </script>
+
 </head>
 <body>
+<th:block th:replace="~{fragments::header}"></th:block>
+<h1>board.html</h1>
+
+[[${session.userID}]]
+<table style="border: 1px solid black;">
+    <tr>
+    <th>t_num</th>
+    <th>t_user</th>
+    <th>t_merchant</th>
+    <th>t_time</th>
+    </tr>
+    <th:block th:each="product:${pList}">
+    <tr style="border: 1px solid black;">
+
+            <td th:text="${product.t_num}"></td>
+            <td th:text="${product.t_user}"></td>
+            <td th:text="${product.t_merchant}"></td>
+            <td th:text="${product.t_time}"></td>
+
+
+    </tr>
+    </th:block>
+
+</table>
+
+
+
 
 </body>
 </html>

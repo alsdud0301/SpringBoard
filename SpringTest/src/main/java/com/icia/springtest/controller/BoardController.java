@@ -25,12 +25,15 @@ public class BoardController {
 
         if(pList!=null){
             model.addAttribute("pList",pList);
-            return "/board";
+
+            return "board";
         }
-        return "redirect :/";
-
-
-
+        return "redirect:/";
     }
+//    GetMapping()
+//    public String boardPaging(ProductDto pDto){
+//
+//        return "";
+//    }
 
 }
