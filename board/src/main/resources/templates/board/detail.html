@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery-3.1.1.min.js"
+            integrity="sha512-U6K1YLIFUWcvuw5ucmMtT9HH4t0uz3M366qrF5y4vnyH6dgDzndlcGvH/Lz5k8NFh80SN95aJ5rqGZEdaQZ7ZQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:inline="javascript">
+        const m = [[${param.msg}]]
+        const id = [[${session.member}]];	// id속성이 없으면 null
+
+        $(() => {
+            msgPrint()
+            loginStatus()
+
+
+
+        }) // ready end
+    </script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="wrap">
+    <th:block th:replace="~{fragments::header}"></th:block>
+    <section>
+        <div class="content">
+            <div class="write-form">
+                <div class="user-info">
+                    <div class="user-info-sub">
+                        <p th:text="|등급 [${session.member.g_name}]|"></p>
+                        <p th:text="|POINT [${session.member.m_point}]|"></p>
+                    </div>
+                </div>
+                <h2 class="login-header">상세 보기</h2>
+                <div>
+                    <div class="t_content p-15">NUM</div>
+                    <div class="d_content p-85">[[${board.b_num}]]</div>
+                </div>
+                <div>
+                    <div class="t_content p-15">WRITER</div>
+                    <div class="d_content p-35">[[${board.b_writer}]]</div>
+                    <div class="t_content p-15">DATE</div>
+                    <div class="d_content p-35">
+                        [[${board.b_date}]]
+                    </div>
+                </div>
+                <div>
+                    <div class="t_content p-15">TITLE</div>
+                    <div class="d_content p-85">[[${board.b_title}]]</div>
+                </div>
+                <div>
+                    <!-- summernote form태그없을때는 div, form태그시는 textarea -->
+                    <div class="t_content p-15 content_h">CONTENTS</div>
+                    <div class="d_content p-85 content_h" th:text="${board.b_contents}"></div>
+                </div>
+            </div>
+        </div>
+
+        <!--첨부파일 영역-->
+        <!--버튼-->
+        <div class="btn-area">
+            <button class="btn-write" id="upbtn"
+                    th:onclick="|upload_board([[${board.b_num}]])|">U</button>
+<!--            <button class="btn-write" id="delbtn"-->
+<!--                    th:onclick="'delete_board(' + ${board.b_writer} + ')'">D-->
+<!--            </button>-->
+            <button class="btn-write" id="delbtn"
+                    th:onclick="|delete_board([[${board.b_num}]])|">D
+            </button>
+<!--            <button class="btn-write" id="delbtn"-->
+<!--                    th:attr="onclick=|delete_board('${board.b_writer}')|">D-->
+<!--            </button>-->
+
+            <button class="btn-sub" onclick="backbtn()">B</button>
+        </div>
+
+        <!-- 댓글 입력 양식-->
+        <form id="rform"  class="write-form" >
+            <!-- 게시글 정보(글번호), 댓글 내용, 접속자(작성자) -->
+            <input type="hidden" name="r_bnum" id="r_bnum"
+                   th:value="${board.b_num}">
+            <textarea name="r_contents" rows="3" cols="80"  class="write-input ta"
+                      id="r_contents" placeholder="댓글을 적어주세요."></textarea>
+            <input type="hidden" name="r_writer" id="r_writer"
+                   th:value="${session.member.m_id}">
+            <input type="button" value="댓글 전송"
+                   class="btn-write" onclick="replyInsert()"
+                   style="width:100%; margin-bottom: 30px;">
+        </form>
+        <!-- 댓글 리스트 출력 영역-->
+        <table style="width: 50%" th:align="center">
+            <!-- 제목 테이블 -->
+            <tr class="rtbl-head">
+                <td class="p-20">WRITER</td>
+                <td class="p-50">CONTENTS</td>
+                <td class="p-30">DATE</td>
+            </tr>
+        </table>
+        <!-- 댓글 리스트 -->
+        <table style="width: 50%;" id="rtable">
+        </table>
+    </section>
+    <th:block th:replace="~{fragments::footer}"></th:block>
+    <script th:inline="javascript">
+        function upload_board(bnum){
+
+        }
+        function delete_board(bnum){
+            console.log('bnum:'+bnum)
+            let result = confirm("삭제하시겠습니까?");
+            if(result){
+                location.href=`/board/delete?b_num=${bnum}`; //js 변수
+            }
+
+        }
+
+        function replyInsert(){
+            let data={};
+            data.r_contents=$('#r_contents').val();
+            data.r_bnum=$('#r_bnum').val();
+            // data.r_writer=$('#r_writer').val();
+            data.r_writer=[[${session.member.m_id}]]
+            console.log('data:',data);
+            $.ajax({
+                method: 'post', //post, delete, put, patch
+                url: '/board/reply',
+                //1.urlEncoded방식(get,post):특수문자는 못넘김
+                // contentType:'application/x-www-form-urlencoded',//header의 contentType 기본값
+                //2.json방식(post만) :서버에서 받을 때 ResquestBody
+                contentType:'application/json;charset=UTF-8',//json 데이터 넘김
+                // data:data, //data: {r_bnum:100,r_contents:'댓글1',r_writer:'icia'}
+                //dataType 생략가능(서버에서 header의 dataType을 자동인식)
+                dataType:'json',//'text(html)', 'xml','jsonp'
+                data:JSON.stringify(data),//r_contents='댓글3'&&r_bnum=34&....
+
+
+            }).done(res=> console.log('res:',res));
+                // .fail(err=>console.log('err:',err));
+
+        }
+        function backbtn(){
+            location.href="/board";
+        }
+    </script>
+</div>
+</body>
+</html>

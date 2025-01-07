@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!--
+id 자리엔 메소드 이름
+parameterType : 생략 가능, Mapper Class 가능, 한번만 사용가능
+resultType : resultType="Boolean" 생략 가능(?), Mapper Class 가능, 한번만 사용가능
+#{변수명}, #{필드명} #{속성명}
+여러 레코드를 반환시 List 타입이 아닌 객체타입명시
+${변수명}, ${필드명}, ${속성명} : 문자열일경우 ''을 붙이지 않음
+-->
+<mapper namespace="com.icia.board.dao.MemberDao">
+    <insert id="join" parameterType="memberDto">
+        insert into member(m_id,m_pwd,m_name,m_birth,m_addr,m_point) values(#{m_id},#{m_pwd},#{m_name},#{m_birth},#{m_addr},default)
+    </insert>
+    <select id="login" parameterType="MemberDto" resultType="boolean">
+        SELECT COUNT(*) FROM MEMBER WHERE M_ID = #{m_id} AND M_PWD = #{m_pwd}
+    </select>
+    <select id="isUserId" parameterType="String" resultType="java.lang.Boolean">
+        select count(*) from member where m_id=#{mId}
+    </select>
+    <select id="getSecurityPw" resultType="String">
+        SELECT M_PWD FROM MEMBER WHERE M_ID=#{mId}
+    </select>
+    <select id="getMemberInfo" resultType="com.icia.board.dto.MemberDto">
+        select m_id,m_name,m_point,g_name from member m join grade g on m.m_point between g.g_lowpoint and g.g_highpoint where m.m_id=#{mId};
+    </select>
+
+</mapper>
