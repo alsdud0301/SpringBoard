@@ -1,5 +1,6 @@
 package com.icia.board.dao;
 
+import com.icia.board.dto.ReplyDto;
 import com.icia.board.dto.SearchDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -29,4 +30,10 @@ public interface BoardDao {
     BoardDto getBoardDetail(Integer bNum);
 
     boolean deleteBoard(Integer bNum);
+
+    boolean insertReplys(ReplyDto rDto);
+
+    List<ReplyDto> getReplyList(Integer bNum);
+
+    boolean insertContent(BoardDto board);
 }

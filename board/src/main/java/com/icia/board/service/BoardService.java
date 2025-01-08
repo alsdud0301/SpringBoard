@@ -4,6 +4,7 @@ package com.icia.board.service;
 import com.icia.board.common.Paging;
 import com.icia.board.dao.BoardDao;
 import com.icia.board.dto.BoardDto;
+import com.icia.board.dto.ReplyDto;
 import com.icia.board.dto.SearchDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,5 +74,24 @@ public class BoardService {
 
     public boolean boardDelete(Integer bNum) {
         return boardDao.deleteBoard(bNum);
+    }
+
+    public boolean insertReplys(ReplyDto rDto) {
+        return boardDao.insertReplys(rDto);
+    }
+
+    public List<ReplyDto> getReplyList(Integer bNum) {
+        return boardDao.getReplyList(bNum);
+    }
+
+    public boolean insertContent(BoardDto board) {
+        log.info("service 실행");
+        boolean result=boardDao.insertContent(board);
+        if(result){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 }

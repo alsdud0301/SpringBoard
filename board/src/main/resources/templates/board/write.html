@@ -3,8 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery-3.1.1.min.js"
+            integrity="sha512-U6K1YLIFUWcvuw5ucmMtT9HH4t0uz3M366qrF5y4vnyH6dgDzndlcGvH/Lz5k8NFh80SN95aJ5rqGZEdaQZ7ZQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script th:inline="javascript">
+        const m = [[${param.msg}]]
+        const id = [[${session.member}]];	// id속성이 없으면 null
+
+        $(() => {
+            msgPrint()
+            loginStatus()
+
+
+
+        }) // ready end
+    </script>
+    <script src="/js/common.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
 </head>
 <body>
+<th:block th:replace="~{fragments::header}"></th:block>
 <h1>board/write.html</h1>
+<!--<form  method="post">-->
+
+
+    <p id="p" th:value="${session.member.m_id}"></p>
+
+    <input type="text" id="b_title" name="b_title" placeholder="제목">
+    <textarea id="b_contents" name="b_contents"></textarea>
+    <button onclick="insertbtn()">글등록</button>
+<!--</form>-->
+<script>
+    function insertbtn(){
+        const btitle = document.getElementById('b_title').value;
+        const bcontents = document.getElementById('b_contents').value;
+        const writer = document.getElementById('p').value;
+        axios.post('/board/write',
+
+            {
+                b_title:btitle,
+                b_contents:bcontents,
+                b_writer:writer
+            },{
+            headers:{"Content-Type":"application/json"}
+
+
+
+        }).then((res)=> {
+                console.log(res)
+                if (res.data) {
+                    alert('글작성 성공!')
+                    location.href='/board'
+                } else {
+                    location.href='/board/write'
+                    alert('글작성 실패!')
+                }
+
+            }
+        )
+        // ).catch((err)=>{
+        //     console.log(err);
+        //     alert('에러!')
+        // })
+    }
+</script>
 </body>
 </html>
