@@ -26,48 +26,48 @@
 <body>
 <th:block th:replace="~{fragments::header}"></th:block>
 <h1>board/write.html</h1>
-<!--<form  method="post">-->
+<form  method="post" action="/board/write" enctype="multipart/form-data">
 
 
     <p id="p" th:value="${session.member.m_id}"></p>
 
     <input type="text" id="b_title" name="b_title" placeholder="제목">
     <textarea id="b_contents" name="b_contents"></textarea>
-    <button onclick="insertbtn()">글등록</button>
-<!--</form>-->
+    <input type="file" multiple id="attachments" name="attachments">
+<!--    <button onclick="insertbtn()">글등록</button>-->
+    <input type="submit" value="글등록">
+</form>
 <script>
-    function insertbtn(){
-        const btitle = document.getElementById('b_title').value;
-        const bcontents = document.getElementById('b_contents').value;
-        const writer = document.getElementById('p').value;
-        axios.post('/board/write',
-
-            {
-                b_title:btitle,
-                b_contents:bcontents,
-                b_writer:writer
-            },{
-            headers:{"Content-Type":"application/json"}
-
-
-
-        }).then((res)=> {
-                console.log(res)
-                if (res.data) {
-                    alert('글작성 성공!')
-                    location.href='/board'
-                } else {
-                    location.href='/board/write'
-                    alert('글작성 실패!')
-                }
-
-            }
-        )
-        // ).catch((err)=>{
-        //     console.log(err);
-        //     alert('에러!')
-        // })
-    }
+//     function insertbtn(){
+//         const formData = new FormData();
+//         formData.append("b_title",document.getElementById('b_title').value);
+//         formData.append("b_contents",document.getElementById('b_contents').value);
+//         formData.append("b_writer", document.getElementById('p').value);
+//         formData.append("contentfile",document.getElementById('contentfile').files[0]);
+//
+//         axios.post('/board/write',formData,
+// {
+//             headers:{"Content-Type":"multipart/form-data"}
+//
+//
+//
+//         }).then((res)=> {
+//                 console.log(res)
+//                 if (res.data) {
+//                     alert('글작성 성공!')
+//                     location.href='/board'
+//                 } else {
+//                     location.href='/board/write'
+//                     alert('글작성 실패!')
+//                 }
+//
+//             }
+//         )
+//         // ).catch((err)=>{
+//         //     console.log(err);
+//         //     alert('에러!')
+//         // })
+//     }
 </script>
 </body>
 </html>

@@ -14,6 +14,13 @@ ${변수명}, ${필드명}, ${속성명} : 문자열일경우 ''을 붙이지 �
     <insert id="join" parameterType="memberDto">
         insert into member(m_id,m_pwd,m_name,m_birth,m_addr,m_point) values(#{m_id},#{m_pwd},#{m_name},#{m_birth},#{m_addr},default)
     </insert>
+    <update id="updateMemberPoint">
+        update member set m_point=#{m_point} where m_id=#{m_id}
+    </update>
+    <select id="getPointOverMember" parameterType="Integer">
+        <![CDATA[
+        select * from member where m_point<=#{point}]]>
+    </select>
     <select id="login" parameterType="MemberDto" resultType="boolean">
         SELECT COUNT(*) FROM MEMBER WHERE M_ID = #{m_id} AND M_PWD = #{m_pwd}
     </select>
@@ -24,7 +31,7 @@ ${변수명}, ${필드명}, ${속성명} : 문자열일경우 ''을 붙이지 �
         SELECT M_PWD FROM MEMBER WHERE M_ID=#{mId}
     </select>
     <select id="getMemberInfo" resultType="com.icia.board.dto.MemberDto">
-        select m_id,m_name,m_point,g_name from member m join grade g on m.m_point between g.g_lowpoint and g.g_highpoint where m.m_id=#{mId};
+        select m.m_id,m.m_name,m.m_point,g.g_name from member m join grade g on m.m_point between g.g_lowpoint and g.g_highpoint where m.m_id=#{mId};
     </select>
 
 </mapper>

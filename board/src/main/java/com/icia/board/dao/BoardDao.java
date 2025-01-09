@@ -1,5 +1,6 @@
 package com.icia.board.dao;
 
+import com.icia.board.dto.BoardFile;
 import com.icia.board.dto.ReplyDto;
 import com.icia.board.dto.SearchDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -36,4 +37,11 @@ public interface BoardDao {
     List<ReplyDto> getReplyList(Integer bNum);
 
     boolean insertContent(BoardDto board);
+
+    boolean boardWriteSelectKey(BoardDto board);
+
+    boolean fileInsertMap(Map<String, String> fMap);
+
+    @Select("select bf_orifilename, bf_sysfilename from boardfile where bf_bnum=#{bNum}")
+    List<BoardFile> getBfList(Integer bNum);
 }

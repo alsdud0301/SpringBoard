@@ -9,7 +9,7 @@
         insert into reply values(null,#{r_content},null,#{m_id},#{b_num})
     </insert>
     <insert id="insertContent">
-        insert into board values(null,#{b_title},#{b_contents},#{b_writer},DEFAULT, DEFAULT)
+        insert into board values(null,#{b_title},#{b_contents},#{b_writer},DEFAULT, DEFAULT,#{b_file})
     </insert>
     <delete id="deleteBoard">
         delete from board where b_num=#{b_num}
@@ -44,4 +44,16 @@
     <select id="getReplyList" resultType="com.icia.board.dto.ReplyDto">
         select * from reply where b_num=#{b_num}
     </select>
+
+    <!--오라클은 selectKey만 가능, Mysql selectKey, useGeneratedKeys(간단,권장)가능-->
+    <insert id="boardWriteSelectKey" parameterType="boardDto" useGeneratedKeys="true" keyProperty="b_num">
+        insert into board values(null,#{b_title},#{b_contents},#{b_writer},default,default)
+<!--        <selectKey keyProperty="b_num" resultType="int" order="AFTER">-->
+<!--            select last_insert_id() &lt;!&ndash;가장 최근 오토인크리먼트 생성값&ndash;&gt;-->
+<!--        </selectKey>-->
+
+    </insert>
+    <insert id="fileInsertMap">
+        insert into boardfile values(null,#{b_num},#{oriFileName},#{sysFileName})
+    </insert>
 </mapper>

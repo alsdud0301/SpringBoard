@@ -6,6 +6,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery-3.1.1.min.js"
             integrity="sha512-U6K1YLIFUWcvuw5ucmMtT9HH4t0uz3M366qrF5y4vnyH6dgDzndlcGvH/Lz5k8NFh80SN95aJ5rqGZEdaQZ7ZQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script th:inline="javascript">
         const m = [[${param.msg}]]
         const id = [[${session.member}]];	// id속성이 없으면 null
@@ -53,11 +55,32 @@
                     <!-- summernote form태그없을때는 div, form태그시는 textarea -->
                     <div class="t_content p-15 content_h">CONTENTS</div>
                     <div class="d_content p-85 content_h" th:text="${board.b_contents}"></div>
+
+<!--                    <div class="d_content p-85 content_h"><img th:src="${fileURL}" alt="img">-->
+
                 </div>
             </div>
         </div>
 
         <!--첨부파일 영역-->
+            <div>
+                <div class="t_content p-15 file_h">FILES</div>
+                <div class="d_content p-85 file_h" style="overflow:auto;">
+                    <th:block th:if="${#lists.isEmpty(bfList)}">
+                        첨부된 파일이 없습니다
+                    </th:block>
+                    <th:block th:unless="${#lists.isEmpty(bfList)}">
+                        <th:block th:each="file:${bfList}">
+<!--                            <img th:src="@{|/upload/${file.getBf_sysfilename()}|}" width="100" />-->
+                            <a th:href="@{|/board/download?bf_sysfilename=${file.bf_sysfilename}&bf_orifilename=${file.bf_orifilename}|}">
+                                    <i class='far fa-file' style='font-size:24px'></i>
+                                    <span th:text="${file.bf_orifilename}"> </span>
+                                </a>
+
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
         <!--버튼-->
         <div class="btn-area">
             <button class="btn-write" id="upbtn"
@@ -89,7 +112,7 @@
                    style="width:100%; margin-bottom: 30px;">
         </form>
         <!-- 댓글 리스트 출력 영역-->
-        <table style="width: 50%" th:align="center">
+        <table id="tableth" style="width: 50%" th:align="center">
             <!-- 제목 테이블 -->
             <tr class="rtbl-head">
                 <td class="p-20">WRITER</td>
@@ -101,6 +124,9 @@
         <table style="width: 50%;" id="rtable">
         </table>
     </section>
+        </div>
+
+
     <th:block th:replace="~{fragments::footer}"></th:block>
     <script th:inline="javascript">
         function upload_board(bnum){
@@ -114,31 +140,69 @@
             }
 
         }
-
         function replyInsert(){
-            let data={};
-            data.r_contents=$('#r_contents').val();
-            data.r_bnum=$('#r_bnum').val();
-            // data.r_writer=$('#r_writer').val();
-            data.r_writer=[[${session.member.m_id}]]
-            console.log('data:',data);
-            $.ajax({
-                method: 'post', //post, delete, put, patch
-                url: '/board/reply',
-                //1.urlEncoded방식(get,post):특수문자는 못넘김
-                // contentType:'application/x-www-form-urlencoded',//header의 contentType 기본값
-                //2.json방식(post만) :서버에서 받을 때 ResquestBody
-                contentType:'application/json;charset=UTF-8',//json 데이터 넘김
-                // data:data, //data: {r_bnum:100,r_contents:'댓글1',r_writer:'icia'}
-                //dataType 생략가능(서버에서 header의 dataType을 자동인식)
-                dataType:'json',//'text(html)', 'xml','jsonp'
-                data:JSON.stringify(data),//r_contents='댓글3'&&r_bnum=34&....
+            // const rbnum = document.getElementById('r_bnum').value;
+            const rcontents = document.getElementById('r_contents').value;
+            const rwriter = document.getElementById('r_writer').value;
+            axios({
+                method:"post",
+                url:"/board/reply",
+                data:{
 
+                    r_content: rcontents,
+                    m_id: rwriter,
+                    b_num : [[${session.b_num}]]
+                }
 
-            }).done(res=> console.log('res:',res));
-                // .fail(err=>console.log('err:',err));
+            }).then(res=>{
+                console.log("res",res);
 
+                replyget();
+
+            }).catch(err=>{
+                console.log("err",err);
+            })
         }
+        function replyget(){
+            const table = document.getElementById('tableth')
+            axios({
+                method: "get",
+                url:"/replydetail",
+                data:[[${rList}]]
+
+
+            }).then(res=>{
+                console.log(res);
+                data.forEach(() =>{
+
+                })
+
+            })
+        }
+        // function replyInsert(){
+        //     let data={};
+        //     data.r_contents=$('#r_contents').val();
+        //     data.r_bnum=$('#r_bnum').val();
+        //     // data.r_writer=$('#r_writer').val();
+        //     data.r_writer=[[${session.member.m_id}]]
+        //     console.log('data:',data);
+        //     $.ajax({
+        //         method: 'post', //post, delete, put, patch
+        //         url: '/board/reply',
+        //         //1.urlEncoded방식(get,post):특수문자는 못넘김
+        //         // contentType:'application/x-www-form-urlencoded',//header의 contentType 기본값
+        //         //2.json방식(post만) :서버에서 받을 때 ResquestBody
+        //         contentType:'application/json;charset=UTF-8',//json 데이터 넘김
+        //         // data:data, //data: {r_bnum:100,r_contents:'댓글1',r_writer:'icia'}
+        //         //dataType 생략가능(서버에서 header의 dataType을 자동인식)
+        //         dataType:'json',//'text(html)', 'xml','jsonp'
+        //         data:JSON.stringify(data),//r_contents='댓글3'&&r_bnum=34&....
+        //
+        //
+        //     }).done(res=> console.log('res:',res));
+        //         // .fail(err=>console.log('err:',err));
+        //
+        // }
         function backbtn(){
             location.href="/board";
         }

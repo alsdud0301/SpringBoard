@@ -1,15 +1,19 @@
 package com.icia.board.service;
 
 
+import com.icia.board.common.FileManager;
 import com.icia.board.common.Paging;
 import com.icia.board.dao.BoardDao;
-import com.icia.board.dto.BoardDto;
-import com.icia.board.dto.ReplyDto;
-import com.icia.board.dto.SearchDto;
+import com.icia.board.dao.MemberDao;
+import com.icia.board.dto.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +25,9 @@ public class BoardService {
     public static final Integer LISTCNT = 10 ;
     private static final int PAGECOUNT = 2;
     private final BoardDao boardDao;
+    private final FileManager fm;
+    private final MemberDao memberDao;
+
     public List<BoardDto> getBoardList(Integer pageNum) {
 
         //select * from board order b_date desc limit 0,10
@@ -84,14 +91,44 @@ public class BoardService {
         return boardDao.getReplyList(bNum);
     }
 
-    public boolean insertContent(BoardDto board) {
+    public boolean insertContent(BoardDto board, HttpSession session) {
         log.info("service 실행");
-        boolean result=boardDao.insertContent(board);
+        boolean result=boardDao.boardWriteSelectKey(board);
+        log.info("새글 번호 : {}",board.getB_num());
         if(result){
-            return true;
+            //글쓰기 마다 회원에게 point 10점 부여
+            MemberDto member = (MemberDto) session.getAttribute("member");
+            int point = member.getM_point()+10;
+            if(point>100){
+                point=100;
+            }
+            member.setM_point(point);
+            memberDao.updateMemberPoint(member);
+            session.setAttribute("member",member);
+            member = memberDao.getMemberInfo(member.getM_id());//등급포함해서 회원최신정보 가져옴
+            //첨부 파일 여부 확인
+            if(!board.getAttachments().get(0).isEmpty()){
+                //파일업로드,DB insert
+                if(fm.fileUpload(board.getAttachments(),session,board.getB_num())) {
+                    log.info("★upload ok!");
+                    return true;
+                }
+
+                return true; //첨부파일까지 인서트 성공
+            }
+            return true; //첨부파일없이 인서트 성공
         }else{
-            return false;
+            return false; //글쓰기 실패
         }
 
+    }
+
+    public List<BoardFile> getBfList(Integer bNum) {
+
+        return boardDao.getBfList(bNum);
+    }
+
+    public ResponseEntity<Resource> fileDownload(BoardFile boardFile, HttpSession session) throws IOException {
+        return fm.fileDownload(boardFile,session);
     }
 }

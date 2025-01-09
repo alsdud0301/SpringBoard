@@ -1,9 +1,6 @@
 package com.icia.board.controller;
 
-import com.icia.board.dto.BoardDto;
-import com.icia.board.dto.MemberDto;
-import com.icia.board.dto.ReplyDto;
-import com.icia.board.dto.SearchDto;
+import com.icia.board.dto.*;
 import com.icia.board.service.BoardService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.util.List;
 
 @Controller
@@ -68,25 +67,48 @@ public class BoardController {
     }
 
     @PostMapping("/write")
-    @ResponseBody
-    public boolean write(@RequestBody  BoardDto board,HttpSession session){
+    public String write(BoardDto board, HttpSession session, RedirectAttributes rttr){
         //DB에 글을 저장
         log.info("write메서드 실행");
         log.info("제목"+board.getB_title());
         log.info("내용"+board.getB_contents());
+        log.info("파일" + board.getAttachments());
 
         board.setB_writer(((MemberDto)session.getAttribute("member")).getM_id());
+
+        for(MultipartFile multipartFile : board.getAttachments()) {
+            log.info("{}", multipartFile.getOriginalFilename());
+            log.info("{}", multipartFile.getSize());
+            log.info("{}", multipartFile.isEmpty());
+        }
         log.info("작성자"+board.getB_writer());
-        boolean result =bSer.insertContent(board);
+        String realPath = session.getServletContext().getRealPath("/");
+        realPath+="/upload";
+        File file = new File(realPath);
+        if(!file.exists()){
+            file.mkdir();
+        }
+        log.info("경로"+realPath);
+
+
+//        if(!multipartFile.isEmpty()){
+//            String uploadDir = "/uploads/";
+//            String fileName = System.currentTimeMillis()+"_"+multipartFile.getOriginalFilename();
+//            Path filePath = Paths.get(uploadDir+fileName);
+//
+//            Files.createDirectories(filePath.getParent());
+//            Files.write(filePath,multipartFile.getBytes());
+//            board.setB_file(uploadDir+fileName);
+//        }
+        boolean result =bSer.insertContent(board,session);
         if(result){
             log.info("성공했나..?");
-//            return "/board";
+            return "redirect:/board";
 
-            return true;
         }else{
             log.info("성공안했네...");
-//            return "/board"; //get만 허용
-            return false;
+
+            return "redirect:/board/write";
         }
 
 
@@ -103,14 +125,25 @@ public class BoardController {
             return "redirect:/board";
         }
          BoardDto board=bSer.getBoardDetail(b_num);
+
         log.info("=======board:{}",board);
         if(board==null){
             return "redirect:/board";
         }else {
+          //댓글 리스트 가져오기 동기 or 비동기
+            //List<ReplyDto> rList = bSer.getReplyList(b_num); //댓글 n개
+            //첨부파일 리스트 가져오기
+            List<BoardFile> bfList = bSer.getBfList(b_num); //0개~n개
+            log.info("************bfList:{},{}",bfList.size(),bfList);
+            model.addAttribute("bfList",bfList);
             model.addAttribute("board",board);
             return "board/detail";
         }
 
+    }
+    @GetMapping("/viewimg")
+    public String viewImg(Model model){
+        return "board/viewimg";
     }
 
     @GetMapping("/delete")
