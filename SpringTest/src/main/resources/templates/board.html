@@ -11,15 +11,18 @@
             border: 1px solid black;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery-3.1.1.min.js"></script>
     <script th:src="@{/js/common.js}">
+
 
 
     </script>
     <script>
         const user = '[[${session.userID}]]';
         onload =()=> {
+            console.log(user);
             console.log("테스트");
-            sessionuser(user);
+            sessionuser();
         }
     </script>
 
@@ -29,6 +32,7 @@
 <h1>board.html</h1>
 
 [[${session.userID}]]
+<button onclick="location.href='/board/write'">글추가</button>
 <table style="border: 1px solid black;">
     <tr>
     <th>t_num</th>
@@ -39,7 +43,7 @@
     <th:block th:each="product:${pList}">
     <tr style="border: 1px solid black;">
 
-            <td th:text="${product.t_num}"></td>
+            <td ><a th:href="@{/board/detail(t_num=${product.t_num})}" th:text="${product.t_num}"></a></td>
             <td th:text="${product.t_user}"></td>
             <td th:text="${product.t_merchant}"></td>
             <td th:text="${product.t_time}"></td>
@@ -49,9 +53,45 @@
     </th:block>
 
 </table>
+<div class="pagingdiv"></div>
+
+
+
+<script>
+    const pagingdiv = document.querySelector('.pagingdiv');
+    const urlParams = new URL(location.href).searchParams;
+    const pageNum = parseInt(urlParams.get('pageNum')) || 1; // 현재 페이지 번호
+    let start = Math.floor((pageNum - 1) / 5) * 5 + 1; // 현재 페이지를 기준으로 5단위의 시작 값
+    let end = start + 4; // 5단위의 끝 값
+
+    function renderButtons() {
+        let buttons = `<button id="beforebtn" name="beforepage" onclick="before()">이전</button>`;
+        for (let i = start; i <= end; i++) {
+            buttons += `<a class="numberbtn ${i === pageNum ? 'active' : ''}" href="/board?pageNum=${i}">${i}</a>`;
+        }
+        buttons += `<button id="nextbtn" name="nextpage" onclick="nextbtn()">다음</button>`;
+        pagingdiv.innerHTML = buttons;
+    }
+
+    function nextbtn() {
+        start += 5;
+        end = start + 4;
+        renderButtons();
+    }
+
+    function before() {
+        start = Math.max(1, start - 5);
+        end = start + 4;
+        renderButtons();
+    }
+
+    // 초기 렌더링
+    renderButtons();
 
 
 
 
+
+</script>
 </body>
 </html>
