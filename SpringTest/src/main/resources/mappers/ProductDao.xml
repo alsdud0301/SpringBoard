@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.icia.springtest.dao.ProductDao">
-    <insert id="insertProduct">
-        insert into test  values(null,#{t_user},#{t_merchant},default)
+    <insert id="insertProduct" keyProperty="t_num" useGeneratedKeys="true">
+        insert into test values(null,#{t_user},#{t_merchant},default)
+    </insert>
+    <insert id="FileInsert">
+        insert into productfile values(#{pf_num},#{pf_systemname})
+    </insert>
+    <insert id="insertReply">
+        insert into replys values(#{r_num},#{r_contents},#{r_writer})
     </insert>
 
 
     <select id="getProductList" resultType="com.icia.springtest.dto.ProductDto">
         select * from test limit #{start},#{end}
+    </select>
+    <select id="fileDownload" resultType="org.springframework.core.io.Resource">
+        select * from productfile where pf_num=
     </select>
 
 </mapper>
