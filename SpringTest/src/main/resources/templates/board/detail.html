@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        window.onload = () =>{
+            getReply()
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<button class="backbtn" onclick="back()">목록으로</button>
+<h2>내용보기</h2>
+<table border="1">
+
+    <tr>
+        <th>판매</th>
+        <th>구매시간</th>
+        <th>구매자</th>
+    </tr>
+    <tr>
+        <td th:text="${product.t_merchant}"></td>
+        <td th:text="${product.t_time}"></td>
+        <td th:text="${product.t_user}"></td>
+        <td><a th:href="@{/board/download}" th:text="${file.pf_systemname}"></a></td>
+    </tr>
+</table>
+<div class="">
+    <input type="hidden" th:value="${product.t_num}" id="r_tnum">
+    <input type="text" id="reply" name="r_contents">
+    <input type="button" id="replybtn" onclick="replysubmit()" value="댓글작성">
+
+    <div id="replycontent"></div>
+</div>
+<button class="updatebtn" onclick="update()">수정하기</button>
+<button class="deletebtn" onclick="deleteProduct()">삭제하기</button>
+<script>
+    function getReply(){
+        const reply = document.getElementById('replycontent')
+        const r_tnum= document.getElementById('r_tnum').value;
+    axios.get(`/board/reply/${r_tnum}`,{
+    }).then((res)=>{
+        if(res){
+            res.data.forEach((item) => {
+                let replydiv = `
+                    <div class="reply-item">
+                        <span>${item.r_writer}</span> :
+                        <span>${item.r_contents}</span>
+                        <small>${item.r_tnum}</small>
+                    </div>
+                `;
+                reply.innerHTML += replydiv;
+            })
+
+        }
+    })
+    }
+    function back(){
+        location.href='/board?pageNum='+pageNum;
+    }
+    function update(){
+
+    }
+    function deleteProduct(){
+
+    }
+    function replysubmit(){
+        const rcontents = document.getElementById('reply').value;
+        const r_num = document.getElementById('r_tnum').value;
+        const reply = document.querySelector('#replycontent');
+        console.log(rcontents)
+        axios.post('/board/reply',{
+            r_contents: rcontents,
+            r_writer : '[[${session.userID}]]',
+            r_tnum : r_num,
+        }).then((res)=>{
+            console.log(res.data);
+
+            if(res){
+
+                    let replydiv = `
+                    <div class="reply-item">
+                        <span>${res.data.r_writer}</span> :
+                        <span>${res.data.r_contents}</span>
+                        <small>${res.data.r_tnum}</small>
+                    </div>
+                `;
+                    reply.innerHTML += replydiv;
+
+
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -76,11 +76,20 @@ public class ProductService {
     }
 
     public boolean insertReply(ReplyDto rDto) {
+        log.info("댓글 서비스");
         return pDao.insertReply(rDto);
     }
 
-    public ResponseEntity<Resource> fileDownload(FileDto fDto, HttpSession session) throws IOException {
+    public ResponseEntity<Resource> fileDownload(FileDto fDto, HttpSession session, Integer t_num) throws IOException {
 
-        return pDao.fileDownload(fDto,session);
+        return pDao.fileDownload(fDto,session,t_num);
+    }
+
+    public FileDto getFile(Integer tNum) {
+        return pDao.getFile(tNum);
+    }
+
+    public List<ReplyDto> getReply(int tNum) {
+        return pDao.getReply(tNum);
     }
 }

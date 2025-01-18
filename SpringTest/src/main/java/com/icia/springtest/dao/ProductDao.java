@@ -28,6 +28,10 @@ public interface ProductDao {
 
     boolean insertReply(ReplyDto rDto);
 
-    ResponseEntity<Resource> fileDownload(FileDto fDto, HttpSession session);
+    ResponseEntity<Resource> fileDownload(FileDto fDto, HttpSession session, Integer t_num);
+
+    FileDto getFile(Integer tNum);
+
+    List<ReplyDto> getReply(Integer tNum);
 }
 

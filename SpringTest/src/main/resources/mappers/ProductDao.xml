@@ -8,7 +8,7 @@
         insert into productfile values(#{pf_num},#{pf_systemname})
     </insert>
     <insert id="insertReply">
-        insert into replys values(#{r_num},#{r_contents},#{r_writer})
+        insert into replys values(#{r_num},#{r_tnum},#{r_contents},#{r_writer})
     </insert>
 
 
@@ -16,7 +16,13 @@
         select * from test limit #{start},#{end}
     </select>
     <select id="fileDownload" resultType="org.springframework.core.io.Resource">
-        select * from productfile where pf_num=
+        select * from productfile where pf_num=#{t_num}
+    </select>
+    <select id="getFile" resultType="com.icia.springtest.dto.FileDto">
+        select * from productfile where pf_num=#{tNum}
+    </select>
+    <select id="getReply" resultType="com.icia.springtest.dto.ReplyDto">
+        select * from replys where r_tnum=#{tNum}
     </select>
 
 </mapper>
