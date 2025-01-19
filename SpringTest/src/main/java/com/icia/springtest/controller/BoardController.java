@@ -1,9 +1,6 @@
 package com.icia.springtest.controller;
 
-import com.icia.springtest.dto.FileDto;
-import com.icia.springtest.dto.ProductDto;
-import com.icia.springtest.dto.ReplyDto;
-import com.icia.springtest.dto.SearchDto;
+import com.icia.springtest.dto.*;
 import com.icia.springtest.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,36 +23,39 @@ public class BoardController {
 
     private final ProductService pSer;
     private FileDto fileDto;
-    @GetMapping
-    public String board(SearchDto sDto, Model model){
 
-        List<ProductDto> pList=null;
-        pList= pSer.getProductList(sDto);
+    @GetMapping
+    public String board(SearchDto sDto, Model model) {
+
+        List<ProductDto> pList = null;
+        pList = pSer.getProductList(sDto);
 //        log.info("페이지넘버"+pageNum);
 
 
-        if(pList!=null){
+        if (pList != null) {
 
-            model.addAttribute("pList",pList);
-            model.addAttribute("file",fileDto);
+            model.addAttribute("pList", pList);
+            model.addAttribute("file", fileDto);
             return "board";
         }
         return "redirect:/";
     }
+
     @GetMapping("/write")
-    public String write(){
+    public String write() {
         return "board/write";
     }
+
     @PostMapping("/write")
-    public String writecontent(@ModelAttribute ProductDto pDto, HttpSession session, RedirectAttributes rttr){
+    public String writecontent(@ModelAttribute ProductDto pDto, HttpSession session, RedirectAttributes rttr) {
         pDto.setT_user((String) session.getAttribute("userID"));
-        boolean result  = pSer.insertProduct(pDto,session.getServletContext().getRealPath("/")+"uploads/");
+        boolean result = pSer.insertProduct(pDto, session.getServletContext().getRealPath("/") + "uploads/");
 
 
-        if(result){
+        if (result) {
 
             return "redirect:/board?pageNum=1";
-        }else{
+        } else {
             return "board/write";
         }
 
@@ -65,55 +64,104 @@ public class BoardController {
 
     @PostMapping("/reply")
     @ResponseBody
-    public ReplyDto replypost(@RequestBody ReplyDto rDto){
-        log.info("결과"+rDto);
+    public ReplyDto replypost(@RequestBody ReplyDto rDto) {
+        log.info("결과" + rDto);
         boolean result = pSer.insertReply(rDto);
 
-        if(result){
+        if (result) {
             return rDto;
-        }else{
+        } else {
             return null;
         }
     }
+
     @GetMapping("/reply/{r_tnum}")
     @ResponseBody
-    public List<ReplyDto> reply(@PathVariable int r_tnum){
+    public List<ReplyDto> reply(@PathVariable int r_tnum) {
 //        log.info("결과"+rDto);
         List<ReplyDto> rList = null;
         rList = pSer.getReply(r_tnum);
-        if(rList!=null){
+        if (rList != null) {
             log.info("테스트" + rList);
             return rList;
-        }else{
+        } else {
             return null;
         }
     }
+
     @GetMapping("/detail")
-    public String productDetail(@RequestParam("t_num") Integer t_num,Model model){
+    public String productDetail(@RequestParam("t_num") Integer t_num, Model model) {
         ProductDto pDto = pSer.getProductInfo(t_num);
         FileDto fileDto = pSer.getFile(t_num);
-        if(pDto!=null && fileDto!=null){
-            model.addAttribute("product",pDto);
-            model.addAttribute("file",fileDto);
+        log.info(String.valueOf(fileDto));
+        if (pDto != null || fileDto != null) {
+            model.addAttribute("product", pDto);
+            model.addAttribute("file", fileDto);
+
             return "board/detail";
-        }else{
+        } else {
             return "redirect:/board";
         }
     }
+
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(FileDto fDto,HttpSession session,@RequestParam("t_num") Integer t_num){
-        try{
-            ResponseEntity<Resource> resp = pSer.fileDownload(fDto,session,t_num);
+    public ResponseEntity<Resource> download(FileDto fDto, HttpSession session, @RequestParam("t_num") Integer t_num) {
+        try {
+            ResponseEntity<Resource> resp = pSer.fileDownload(fDto, session, t_num);
 
             return resp;
-        }catch(IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
 
     }
+//    @GetMapping("/update")
+//    @ResponseBody
+//    public ResponseEntity<?> updateinfo(@RequestParam int t_num){
+//        ProductDto result = pSer.getProductInfo(t_num);
+//        log.info("테스트 : "+result);
+//        if(result!=null){
+////            log.info("테스트 : "+result);
+//            return ResponseEntity.ok(result);
+//        }else{
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("데이터를 찾을 수 없습니다.");
+//        }
+//    }
 
 
+    @GetMapping("/update")
+    public String update() {
+        return "board/update";
+    }
 
+    @PostMapping("/update2")
+    @ResponseBody
+    public ResponseDto updateinfo(@RequestBody ProductDto pDto) {
+        log.info("t_num" + pDto.getT_num());
+        ProductDto result = pSer.getProductupdateInfo(pDto.getT_num());
+        FileDto result2 = pSer.getFileupdate(pDto.getT_num());
+        log.info("테스트 : " + result);
 
+        ResponseDto response = new ResponseDto();
+        response.setProductDto(result);
+        response.setFileDto(result2);
+        return response;
+    }
+
+    @PostMapping("/update")
+    @ResponseBody
+    public boolean updatePost(ProductDto pDto, HttpSession session) {
+        log.info("수정 테스트");
+        boolean result = pSer.updateProduct(pDto,session.getServletContext().getRealPath("/") + "uploads/");
+        log.info(String.valueOf(result));
+        if (result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
+
+
+

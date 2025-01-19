@@ -33,5 +33,13 @@ public interface ProductDao {
     FileDto getFile(Integer tNum);
 
     List<ReplyDto> getReply(Integer tNum);
+
+    boolean updateProduct(ProductDto pDto);
+
+    ProductDto getupdateinfo(Integer tNum);
+
+    FileDto getupdateFile(Integer tNum);
+
+    boolean FileUpdate(FileDto fileDto);
 }
 

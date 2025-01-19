@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script th:src="@{/js/common.js}"></script>
+
+    <script>
+        const user = '[[${session.userID}]]';
+        onload =()=> {
+            console.log(user);
+            console.log("테스트");
+            sessionuser();
+            infoDetail()
+        }
+    </script>
+</head>
+<body>
+<th:block th:replace="~{fragments::header}"></th:block>
+<h1>글수정</h1>
+<input type="text" placeholder="t_merchant" name="t_merchant" id="t_merchant">
+<input type="file" id="attachments" name="pf_systemname" multiple >
+<span id="file-name">첨부 파일 없음</span>
+<button onclick="input()">수정</button>
+<script>
+    function infoDetail() {
+        const param = new URLSearchParams(window.location.search);
+        const t_num = param.get('t_num'); // URL에서 t_num 추출
+        console.log('t_num:', t_num);
+
+        axios.post('/board/update2', {
+            t_num: t_num // JSON 형태로 데이터 전송
+        }, {
+            headers: { // Content-Type 헤더 설정
+                "Content-Type": "application/json",
+            },
+        }).then((res) => {
+            if (res.status === 200) {
+                console.log('응답 데이터:',  res.data.fileDto.pf_systemname);
+                if(res.data.fileDto){
+                    document.getElementById('file-name').textContent = res.data.fileDto.pf_systemname || '첨부 파일 없음';
+                }
+                if (res.data.productDto) {
+                    document.getElementById('t_merchant').value = res.data.productDto.t_merchant || '';
+
+                }
+
+            } else {
+                console.warn('예상치 못한 응답 상태 코드:', res.status);
+            }
+        }).catch((err) => {
+            console.error('요청 실패:', err.response ? err.response.data : err.message);
+        });
+    }
+
+    function input(){
+        const tmerchant = document.getElementById('t_merchant').value;
+        const file = document.getElementById('attachments').files;
+        const param = new URLSearchParams(window.location.search);
+        const t_num = param.get('t_num'); // URL에서 t_num 추출
+        const formData = new FormData()
+
+        formData.append('t_merchant',tmerchant)
+        formData.append('t_num',t_num)
+        Array.from(file).forEach((files)=>{
+            formData.append('attachments',files)
+        })
+
+        axios.post('/board/update', formData,
+            {
+                headers:{
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+            .then((res)=>{
+                console.log(res);
+                if(res){
+                    alert("글수정 성공")
+                    location.href='/board/detail?t_num='+t_num;
+                }else{
+                    alert("글수정 실패");
+                    location.href='/board/update?t_num='+t_num;
+                }
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+        document.getElementById('attachments').addEventListener('change', (event) => {
+            const files = event.target.files;
+            const fileNameDisplay = document.getElementById('file-name');
+
+            if (files.length > 0) {
+                fileNameDisplay.textContent = Array.from(files).map(file => file.name).join(', ');
+            } else {
+                fileNameDisplay.textContent = '첨부 파일 없음';
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -24,7 +24,14 @@
         <td th:text="${product.t_merchant}"></td>
         <td th:text="${product.t_time}"></td>
         <td th:text="${product.t_user}"></td>
-        <td><a th:href="@{/board/download}" th:text="${file.pf_systemname}"></a></td>
+        <th:block th:if="${file != null and file.pf_systemname != null and file.pf_systemname != ''}">
+            <td><a th:href="@{/board/download}" th:text="${file.pf_systemname}"></a></td>
+        </th:block>
+        <th:block th:if="${file == null or file.pf_systemname == null or file.pf_systemname == ''}">
+            <td>파일이 없습니다</td>
+        </th:block>
+
+
     </tr>
 </table>
 <div class="">
@@ -61,10 +68,25 @@
         location.href='/board?pageNum='+pageNum;
     }
     function update(){
+        const t_num = document.getElementById('r_tnum').value;
+        location.href='/board/update?t_num='+t_num;
 
     }
     function deleteProduct(){
-
+        const t_num = document.getElementById('r_tnum').value;
+        axios.delete('/board/delete',{
+            data:{
+                t_num:t_num,
+                pf_num:t_num
+            }
+        })
+            .then((res)=>{
+                console.log(res);
+                alert("삭제 성공")
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
     }
     function replysubmit(){
         const rcontents = document.getElementById('reply').value;

@@ -10,6 +10,12 @@
     <insert id="insertReply">
         insert into replys values(#{r_num},#{r_tnum},#{r_contents},#{r_writer})
     </insert>
+    <update id="updateProduct">
+        update test set t_merchant=#{t_merchant}  where t_num=#{t_num};
+    </update>
+    <update id="FileUpdate">
+        update productfile set pf_systemname=#{pf_systemname} where pf_num=#{pf_num}
+    </update>
 
 
     <select id="getProductList" resultType="com.icia.springtest.dto.ProductDto">
@@ -23,6 +29,12 @@
     </select>
     <select id="getReply" resultType="com.icia.springtest.dto.ReplyDto">
         select * from replys where r_tnum=#{tNum}
+    </select>
+    <select id="getupdateinfo" resultType="com.icia.springtest.dto.ProductDto">
+        select * from test where t_num=#{tNum}
+    </select>
+    <select id="getupdateFile" resultType="com.icia.springtest.dto.FileDto">
+        select * from productfile where pf_num=#{tNum}
     </select>
 
 </mapper>
