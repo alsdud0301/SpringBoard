@@ -41,5 +41,9 @@ public interface ProductDao {
     FileDto getupdateFile(Integer tNum);
 
     boolean FileUpdate(FileDto fileDto);
+
+    boolean deleteProduct(int tNum);
+
+    boolean deleteFile(int pfNum);
 }
 

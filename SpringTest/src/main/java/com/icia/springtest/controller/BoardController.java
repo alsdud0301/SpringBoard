@@ -5,7 +5,9 @@ import com.icia.springtest.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,7 +69,6 @@ public class BoardController {
     public ReplyDto replypost(@RequestBody ReplyDto rDto) {
         log.info("결과" + rDto);
         boolean result = pSer.insertReply(rDto);
-
         if (result) {
             return rDto;
         } else {
@@ -159,6 +160,32 @@ public class BoardController {
             return true;
         } else {
             return false;
+        }
+    }
+//    @PostMapping("/delete")
+//    @ResponseBody
+//    public boolean delete(@RequestBody ProductDto pDto){
+//        log.info("돌아가라");
+//        boolean result = pSer.deleteProduct(pDto.getT_num());
+//        boolean result2 = pSer.deleteFile(pDto.getT_num());
+//        log.info("삭제 컨트롤러 확인");
+//        if(result || result2){
+//            return true;
+//        }else{
+//            return false;
+//        }
+//    }
+    @DeleteMapping("/delete/{t_num}")
+    @ResponseBody
+    public ResponseEntity<?> delete(@PathVariable int t_num) {
+        log.info("돌아가라");
+        boolean result = pSer.deleteProduct(t_num);
+        boolean result2 = pSer.deleteFile(t_num);
+        log.info("삭제 컨트롤러 확인");
+        if (result || result2) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("데이터를 찾을 수 없습니다.");
         }
     }
 }

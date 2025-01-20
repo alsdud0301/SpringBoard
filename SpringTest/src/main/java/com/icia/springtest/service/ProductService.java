@@ -77,6 +77,7 @@ public class ProductService {
 
     public boolean insertReply(ReplyDto rDto) {
         log.info("댓글 서비스");
+
         return pDao.insertReply(rDto);
     }
 
@@ -91,5 +92,52 @@ public class ProductService {
 
     public List<ReplyDto> getReply(int tNum) {
         return pDao.getReply(tNum);
+    }
+
+    public boolean updateProduct(ProductDto pDto, String uploadsDirectory) {
+        if (pDao.updateProduct(pDto)) {
+            log.info("서비스 테스트"+pDao.updateProduct(pDto));
+            if (!pDto.getAttachments().get(0).isEmpty()) {
+                File dir = new File(uploadsDirectory);
+                if (!dir.exists()) {
+                    dir.mkdir();
+                }
+
+                for (MultipartFile multipartFile : pDto.getAttachments()) {
+                    String pf_originalname = multipartFile.getOriginalFilename();
+                    String pf_systemname = UUID.randomUUID() + "." + FilenameUtils.getExtension(pf_originalname);
+
+                    try {
+                        multipartFile.transferTo(new File(uploadsDirectory + pf_systemname));
+                        if (!pDao.FileUpdate(new FileDto(pDto.getT_num(), pf_systemname))) {
+                            log.info("서비스 테스트2"+!pDao.FileUpdate(new FileDto(pDto.getT_num(), pf_systemname)));
+                            return false;
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+    public ProductDto getProductupdateInfo(Integer tNum) {
+        return pDao.getupdateinfo(tNum);
+    }
+
+    public FileDto getFileupdate(Integer tNum) {
+
+        return pDao.getupdateFile(tNum);
+    }
+
+    public boolean deleteProduct(int tNum) {
+        return pDao.deleteProduct(tNum);
+    }
+
+    public boolean deleteFile(int pfNum) {
+        return pDao.deleteFile(pfNum);
     }
 }

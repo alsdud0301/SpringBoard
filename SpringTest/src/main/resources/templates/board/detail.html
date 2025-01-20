@@ -72,22 +72,51 @@
         location.href='/board/update?t_num='+t_num;
 
     }
-    function deleteProduct(){
+    function deleteProduct() {
         const t_num = document.getElementById('r_tnum').value;
-        axios.delete('/board/delete',{
-            data:{
-                t_num:t_num,
-                pf_num:t_num
-            }
+
+        axios.delete(`/board/delete/${t_num}`, {
+
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+            },
         })
-            .then((res)=>{
+            .then((res) => {
                 console.log(res);
-                alert("삭제 성공")
+                if (res.data==='') {
+                    alert("삭제 성공");
+                    location.href = '/board?pageNum=1';
+                } else {
+                    alert("삭제 실패");
+                }
             })
-            .catch((err)=>{
-                console.log(err);
+            .catch((err) => {
+                console.error(err);
             })
     }
+        //     }); axios.delete('/board/delete', {
+        //     t_num: t_num,
+        //     pf_num: t_num,
+        // }, {
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        // })
+        //     .then((res) => {
+        //         console.log(res);
+        //         if (res.data) {
+        //             alert("삭제 성공");
+        //             location.href = '/board?pageNum=1';
+        //         } else {
+        //             alert("삭제 실패");
+        //         }
+        //     })
+        //     .catch((err) => {
+        //         console.error(err);
+        //     });
+
+
     function replysubmit(){
         const rcontents = document.getElementById('reply').value;
         const r_num = document.getElementById('r_tnum').value;
