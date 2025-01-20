@@ -16,6 +16,12 @@
     <update id="FileUpdate">
         update productfile set pf_systemname=#{pf_systemname} where pf_num=#{pf_num}
     </update>
+    <delete id="deleteProduct">
+        delete from test where t_num=#{tNum}
+    </delete>
+    <delete id="deleteFile">
+        delete from productfile where pf_num=#{pfNum}
+    </delete>
 
 
     <select id="getProductList" resultType="com.icia.springtest.dto.ProductDto">
